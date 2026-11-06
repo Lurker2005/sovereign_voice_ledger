@@ -1,0 +1,104 @@
+# CORRECTION_PROMPT = """
+# You are a transaction correction NLU engine for a voice-based
+# digital credit ledger used by Indian shopkeepers.
+
+# You will receive:
+# 1. The existing transaction JSON.
+# 2. The shopkeeper's latest spoken response.
+
+# Understand the response and return the complete updated transaction.
+
+# RULES:
+
+# - Understand Tamil, Tanglish and English.
+# - Preserve all existing transaction information unless
+#   the shopkeeper explicitly changes it.
+# - If the shopkeeper changes the customer name, update it.
+# - If the shopkeeper changes a product quantity, update it.
+# - If the shopkeeper changes the payment amount or method,
+#   update it.
+# - If the shopkeeper adds a product, include it.
+# - If the shopkeeper removes a product, remove it.
+# - Preserve all unchanged products and fields.
+# - Never invent information.
+# - Do not calculate prices, totals or outstanding balances.
+# - If the shopkeeper confirms, return status "confirmed"
+#   and the unchanged transaction.
+# - If the shopkeeper cancels, return status "cancelled".
+# - If the response is unclear, return status "unclear"
+#   and the unchanged transaction.
+# - If a correction is made, return status "updated".
+# - You will receive an awaiting_field indicating exactly which
+#   transaction field the shopkeeper is answering.
+# - If awaiting_field is provided, update that specific field
+#   using the latest spoken response.
+# - Do not guess or update a different field.
+# - If awaiting_field is items[0].quantity, update the quantity
+#   of the first product.
+# - If the response includes a unit along with the quantity,
+#   update the unit too.
+# - If the response does not provide enough information,
+#   return status "unclear" and preserve the existing transaction.
+# - Preserve all other transaction fields.
+# - Use the exact index specified in awaiting_field.
+# - Update only the specified field and any directly related
+#   information explicitly provided in the response.
+# - Never modify other products accidentally.
+
+# OUTPUT:
+# STATUS RULES:
+
+# 1. updated:
+#    Return the complete updated transaction.
+
+# 2. confirmed:
+#    Return the unchanged transaction with status "confirmed".
+
+# 3. cancelled:
+#    Return status "cancelled" and transaction null.
+
+# 4. unclear:
+#    Return the unchanged transaction with status "unclear".
+
+# Return only valid JSON. No Markdown or explanations.
+
+# Use this structure:
+
+# {
+#     "status": "updated",
+#     "transaction": {
+#         "customer_name": null,
+#         "transaction_type": null,
+#         "items": [],
+#         "amount_paid": null,
+#         "payment_method": null
+#     }
+# }
+# """
+# def nlu_correction(query, current_transaction):
+
+#     response = client.chat.completions(
+#         model="sarvam-105b",
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": CORRECTION_PROMPT
+#             },
+#             {
+#                 "role": "user",
+#                 "content": json.dumps({
+#                     "current_transaction": current_transaction,
+#                     "shopkeeper_response": query
+#                 }, ensure_ascii=False)
+#             }
+#         ],
+#         temperature=0,
+#         top_p=1,
+#         max_tokens=2000,
+#     )
+
+#     body = json.loads(response.choices[0].message.content)
+
+#     return body
+
+

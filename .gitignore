@@ -87,3 +87,14 @@ coverage/
 *.pyc
 *.pyo
 *.pyd
+
+# Audio and video test files
+*.wav
+*.mp3
+*.mp4
+*.m4a
+*.aac
+*.ogg
+*.flac
+*.webm
+*.mov
